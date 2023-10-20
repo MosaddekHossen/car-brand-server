@@ -35,12 +35,40 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/brand/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await brandCollection.findOne(query);
+            res.send(result);
+        })
 
         // Create
         app.post('/brand', async (req, res) => {
             const newBrand = req.body;
             console.log(newBrand);
             const result = await brandCollection.insertOne(newBrand);
+            res.send(result);
+        })
+
+        // Update
+        app.put('/brand/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const upDatedBrand = req.body;
+            const product = {
+                $set: {
+                    name: upDatedBrand.name,
+                    brandName: upDatedBrand.brandName,
+                    type: upDatedBrand.type,
+                    price: upDatedBrand.price,
+                    des: upDatedBrand.des,
+                    rating: upDatedBrand.rating,
+                    image: upDatedBrand.image
+
+                }
+            }
+            const result = await brandCollection.updateOne(filter, product, options);
             res.send(result);
         })
 
