@@ -27,6 +27,7 @@ async function run() {
         // await client.connect();
 
         const brandCollection = client.db('brandDB').collection('brand');
+        const cartCollection = client.db('brandDB').collection('cart')
 
         // Read
         app.get('/brand', async (req, res) => {
@@ -35,6 +36,7 @@ async function run() {
             res.send(result);
         })
 
+        // Details
         app.get('/brand/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -47,6 +49,21 @@ async function run() {
             const newBrand = req.body;
             console.log(newBrand);
             const result = await brandCollection.insertOne(newBrand);
+            res.send(result);
+        })
+
+        // Create Cart route
+        app.post('/brands', async (req, res) => {
+            const cart = req.body;
+            // console.log(cart);
+            const result = await cartCollection.insertOne(cart);
+            res.send(result);
+        })
+
+        // Get cart route
+        app.get('/brands/:email', async (req, res) => {
+            const userEmail = req.params.email;
+            const result = await cartCollection.find({ email: userEmail }).toArray();
             res.send(result);
         })
 
