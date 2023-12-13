@@ -29,21 +29,6 @@ async function run() {
         const brandCollection = client.db('brandDB').collection('brand');
         const cartCollection = client.db('brandDB').collection('cart')
 
-        // Read
-        app.get('/brand', async (req, res) => {
-            const cursor = brandCollection.find();
-            const result = await cursor.toArray();
-            res.send(result);
-        })
-
-        // Details
-        app.get('/brand/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) }
-            const result = await brandCollection.findOne(query);
-            res.send(result);
-        })
-
         // Create
         app.post('/brand', async (req, res) => {
             const newBrand = req.body;
@@ -52,18 +37,26 @@ async function run() {
             res.send(result);
         })
 
-        // Create Cart route
-        app.post('/brands', async (req, res) => {
-            const cart = req.body;
-            // console.log(cart);
-            const result = await cartCollection.insertOne(cart);
+        // Read
+        app.get('/brand', async (req, res) => {
+            const cursor = brandCollection.find();
+            const result = await cursor.toArray();
             res.send(result);
         })
 
-        // Get cart route
-        app.get('/brands/:email', async (req, res) => {
-            const userEmail = req.params.email;
-            const result = await cartCollection.find({ email: userEmail }).toArray();
+        // Get Name
+        app.get('/brandName/:name', async (req, res) => {
+            const name = req.params.name;
+            const query = { name: name };
+            const result = await brandCollection.find(query).toArray();
+            res.send(result);
+        });
+
+        // Get Details 
+        app.get('/brand/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await brandCollection.findOne(query);
             res.send(result);
         })
 
@@ -89,11 +82,26 @@ async function run() {
             res.send(result);
         })
 
+        // Create Cart route
+        app.post('/brands', async (req, res) => {
+            const cart = req.body;
+            // console.log(cart);
+            const result = await cartCollection.insertOne(cart);
+            res.send(result);
+        })
+
+        // Get cart route
+        app.get('/brands/:email', async (req, res) => {
+            const userEmail = req.params.email;
+            const result = await cartCollection.find({ email: userEmail }).toArray();
+            res.send(result);
+        })
+
         // Delete
-        app.delete('/brand/:id', async (req, res) => {
+        app.delete('/brands/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
-            const result = await brandCollection.deleteOne(query);
+            const result = await cartCollection.deleteOne(query);
             res.send(result);
         })
 
@@ -106,7 +114,6 @@ async function run() {
     }
 }
 run().catch(console.dir);
-
 
 app.get('/', (req, res) => {
     res.send('Brand making server is running!');
